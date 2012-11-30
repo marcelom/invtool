@@ -1,16 +1,19 @@
 package main
 
 import (
+	"io/ioutil"
 	"fmt"
-	"os"
-	"xml"
+	//"os"
+	"encoding/xml"
 )
 
-type Query struct {
-	Series Show
+type NMAPRun struct {
+	Scanner string
+	Args    string `xml:"args,attr"`
+
 	// Have to specify where to find episodes since this
 	// doesn't match the xml tags of the data that needs to go into it
-	EpisodeList []Episode `xml:"Episode>"`
+	//EpisodeList []Episode `xml:"Episode>"`
 }
 
 type Show struct {
@@ -37,18 +40,19 @@ func (e Episode) String() string {
 }
 
 func main() {
-	xmlFile, err := os.Open("Castle.xml")
+	//xmlFile, err := os.Open("sample-single.xml")
+	xmlFile, err := ioutil.ReadFile("sample-single.xml")
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
 	}
-	defer xmlFile.Close()
+	//defer xmlFile.Close()
 
-	var q Query
-	xml.Unmarshal(xmlFile, &q)
+	var n NMAPRun
+	xml.Unmarshal(xmlFile, &n)
 
-	fmt.Println(q.Series)
-	for _, episode := range q.EpisodeList {
-		fmt.Printf("\t%s\n", episode)
-	}
+	fmt.Println(n)
+	//	for _, episode := range q.EpisodeList {
+	//		fmt.Printf("\t%s\n", episode)
+	//	}
 }
