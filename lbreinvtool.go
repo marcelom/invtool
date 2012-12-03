@@ -1,57 +1,57 @@
 package main
 
 import (
-	"io/ioutil"
-	"fmt"
-	//"os"
 	"encoding/xml"
+	"fmt"
+	"io/ioutil"
+	"os"
 )
 
 type NMAPRun struct {
-	Scanner string
-	Args    string `xml:"args,attr"`
-
-	// Have to specify where to find episodes since this
-	// doesn't match the xml tags of the data that needs to go into it
-	//EpisodeList []Episode `xml:"Episode>"`
+	XMLName xml.Name `xml:"nmaprun"`
+	Scanner string   `xml:"scanner,attr"`
+	Args    string   `xml:"args,attr"`
+	Start uint64 `xml:"start,attr"`
+	Version string `xml:"version,attr"`
+	XMLOutputVersion string `xml:"xmloutputversion,attr"`
+	ScanInfo ScanInfo `xml:"scaninfo"`
+	Hosts []Host `xml:"host"`
 }
 
-type Show struct {
-	// Have to specify where to find the series title since
-	// the field of this struct doesn't match the xml tag
-	Title    string `xml:"SeriesName>"`
-	SeriesID int
-	Keywords map[string]bool
+type ScanInfo struct {
+	XMLName xml.Name `xml:"scaninfo"`
+	Type string `xml:"type,attr"`
+	Protocol string `xml:"protocol,attr"`
+	NumServices uint64 `xml:"numservices,attr"`
+	//Services string `xml:"services,attr"`
 }
 
-type Episode struct {
-	SeasonNumber  int
-	EpisodeNumber int
-	EpisodeName   string
-	FirstAired    string
+type Host struct {
+	XMLName xml.Name `xml:"host"`
+	StartTime uint64 `xml:"starttime,attr"`
+	EndTime uint64 `xml:"endtime,attr"`
+	Status Status
 }
 
-func (s Show) String() string {
-	return fmt.Sprintf("%s - %d", s.Title, s.SeriesID)
-}
-
-func (e Episode) String() string {
-	return fmt.Sprintf("S%02dE%02d - %s - %s", e.SeasonNumber, e.EpisodeNumber, e.EpisodeName, e.FirstAired)
+type Status struct{
+	XMLName xml.Name `xml:"status"`
+	State string `xml:"state,attr"`
+	Reason string `xml:"reason,attr"`
 }
 
 func main() {
-	//xmlFile, err := os.Open("sample-single.xml")
-	xmlFile, err := ioutil.ReadFile("sample-single.xml")
+	xmlData, err := ioutil.ReadFile("sample-multiple.xml")
+	//xmlData, err := ioutil.ReadFile("sample-single.xml")
 	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
+		fmt.Println("Error opening/reading file:", err)
+		os.Exit(1)
 	}
-	//defer xmlFile.Close()
+	//defer Fp.Close()
 
 	var n NMAPRun
-	xml.Unmarshal(xmlFile, &n)
+	xml.Unmarshal(xmlData, &n)
 
-	fmt.Println(n)
+	fmt.Printf("%+v\n",n)
 	//	for _, episode := range q.EpisodeList {
 	//		fmt.Printf("\t%s\n", episode)
 	//	}

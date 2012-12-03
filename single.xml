@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-16"?>
+<?xml version="1.0"?>
 <?xml-stylesheet href="file:///usr/share/nmap/nmap.xsl" type="text/xsl"?>
 <!-- Nmap 5.21 scan initiated Fri Nov 30 12:02:52 2012 as: nmap -T4 -A -oX 10.200.5.1.xml 10.200.5.1 -->
 <nmaprun scanner="nmap" args="nmap -T4 -A -oX 10.200.5.1.xml 10.200.5.1" start="1354305772" startstr="Fri Nov 30 12:02:52 2012" version="5.21" xmloutputversion="1.03">
