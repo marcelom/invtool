@@ -3,53 +3,81 @@ package main
 import (
 	"encoding/xml"
 	"fmt"
-	//"io/ioutil"
-	//"os"
 )
 
-type Email struct {
-	Where string `xml:"where,attr"`
+//UC is Upper Case, LC is Lower Case
+
+type EmailUC struct {
+	Where string `xml:"Where,attr"`
 	Addr  string
 }
-type Address struct {
-	City, State string
-}
-type Result struct {
+
+type PersonUC struct {
 	XMLName xml.Name `xml:"Person"`
-	Name    string   `xml:"FullName"`
-	Phone   string
-	Email   []Email
-	Groups  []string `xml:"Group>Value"`
-	Address
+	Name    string
+	Email   []EmailUC
+}
+
+type EmailLC struct {
+	Where string `xml:"where,attr"`
+	Addr  string `xml:"addr"`
+}
+
+type PersonLC struct {
+	XMLName xml.Name  `xml:"person"`
+	Name    string    `xml:"name"`
+	Email   []EmailLC `xml:"email"`
 }
 
 func main() {
-	v := Result{Name: "none", Phone: "none"}
+	data1UC := `<Person><Name>John Doe</Name>
+                   <Email Where="home"><Addr>jd@home.com</Addr></Email>
+                   <Email Where='work'><Addr>jd@work.com</Addr></Email>
+                   </Person>`
+	data2UC := `<Person><Name>John Doe</Name>
+                   <Email Where="home"><Addr>jd@home.com</Addr></Email>
+                   </Person>`
+	data1LC := `<person><name>Fulano de Tal</name>
+                   <email where="home"><addr>fdt@home.com</addr></email>
+                   <email where='work'><addr>fdt@work.com</addr></email>
+                   </person>`
+	data2LC := `<person><name>Fulano de Tal</name>
+                   <email where="home"><addr>fdt@home.com</addr></email>
+                   </person>`
 
-	data := `
-	<Person>
-		<FullName>Grace R. Emlin</FullName>
-		<Company>Example Inc.</Company>
-		<Email where='work'>
-			<Addr>gre@work.com</Addr>
-		</Email>
-		<Group>
-			<Value>Friends</Value>
-			<Value2>Squash</Value2>
-		</Group>
-		<City>Hanga Roa</City>
-		<State>Easter Island</State>
-	</Person>`
+	var Person1UC, Person2UC PersonUC
+	var Person1LC, Person2LC PersonLC
 
-	err := xml.Unmarshal([]byte(data), &v)
+	err := xml.Unmarshal([]byte(data1UC), &Person1UC)
 	if err != nil {
 		fmt.Printf("error: %v", err)
 		return
 	}
-	fmt.Printf("XMLName: %#v\n", v.XMLName)
-	fmt.Printf("Name: %q\n", v.Name)
-	fmt.Printf("Phone: %q\n", v.Phone)
-	fmt.Printf("Email: %v\n", v.Email)
-	fmt.Printf("Groups: %v\n", v.Groups)
-	fmt.Printf("Address: %v\n", v.Address)
+
+	fmt.Printf("Upper Case with multiple Email: %+v\n", Person1UC)
+
+	err = xml.Unmarshal([]byte(data2UC), &Person2UC)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return
+	}
+
+	fmt.Printf("Upper Case with single Email: %+v\n", Person2UC)
+
+	err = xml.Unmarshal([]byte(data1LC), &Person1LC)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return
+	}
+
+	fmt.Printf("Lower Case with multiple Email: %+v\n", Person1LC)
+
+	err = xml.Unmarshal([]byte(data2LC), &Person2LC)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return
+	}
+
+	fmt.Printf("Lower Case with single Email: %+v\n", Person2LC)
+
 }
