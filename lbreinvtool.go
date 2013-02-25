@@ -120,7 +120,7 @@ type HostsTotal struct {
 }
 
 func main() {
-	xmlData, err := ioutil.ReadFile("full.xml")
+	xmlData, err := ioutil.ReadFile("full2.xml")
 	//xmlData, err := ioutil.ReadFile("multiple.xml")
 	//xmlData, err := ioutil.ReadFile("single.xml")
 
@@ -132,6 +132,17 @@ func main() {
 
 	var n NMAPRun
 	xml.Unmarshal(xmlData, &n)
+	//if err2 != nil {
+	//	fmt.Printf("error: %v", err2)
+	//		panic("ARRRRGH!!!")
+	//	}
 
 	fmt.Printf("%+v\n", n)
+	//fmt.Printf("%v", xmlData)
+
+	for _, a := range n.Host {
+		for _, b := range a.HostName {
+			fmt.Println(b.Name, b.Type)
+		}
+	}
 }
